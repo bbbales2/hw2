@@ -1,0 +1,5 @@
+Files in this directory:
+
+cgsolve.m      Matlab conjugate gradient solver
+grid5.m        Generates the explicit matrix for the 2D model problem
+blockdiags.m   Subroutine used by grid5.m

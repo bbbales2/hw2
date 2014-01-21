@@ -1,0 +1,857 @@
+cgtest(128)
+
+niters =
+
+   318
+
+
+relres =
+
+   9.9477e-07
+
+sqrt(128)
+
+ans =
+
+   11.3137
+
+cgtest(8)
+
+niters =
+
+    22
+
+
+relres =
+
+   9.0418e-07
+
+cgsolve
+{Error using <a href="matlab:helpUtils.errorDocCallback('cgsolve', '/home/bbales2/Documents/classes/cmps240a/hw2/cgsolve.m', 39)" style="font-weight:bold">cgsolve</a> (<a href="matlab: opentoline('/home/bbales2/Documents/classes/cmps240a/hw2/cgsolve.m',39,0)">line 39</a>)
+Not enough input arguments.
+} 
+cgtest(8)
+<a href="matlab: opentoline('/home/bbales2/Documents/classes/cmps240a/hw2/cgsolve.m',56,1)">56  </a>    x = x + alpha * d;
+alpha
+
+alpha =
+
+    0.6587
+
+rtr
+
+rtr =
+
+   19.3982
+
+if system_dependent('IsDebugMode')==1, dbcont; end
+rtr
+
+rtr =
+
+   35.4100
+
+Ad[1:10]
+ Ad[1:10]
+  |
+{Error: Unbalanced or unexpected parenthesis or bracket.
+} 
+Ad(1:10)
+
+ans =
+
+    1.8079
+   -1.2379
+    2.3575
+   -0.5176
+   -0.1383
+    0.9565
+   -0.6058
+    2.3273
+    0.3110
+   -1.0974
+
+b
+
+b =
+
+    0.5492
+    0.0698
+    0.8604
+    0.2084
+    0.2386
+    0.3806
+    0.2874
+    0.7505
+    0.3189
+    0.1074
+    0.8061
+    0.2521
+    0.5039
+    0.0399
+    0.6242
+    0.3874
+    0.3083
+    0.3320
+    0.9316
+    0.4680
+    0.0001
+    0.7258
+    0.3995
+    0.0229
+    0.6377
+    0.4394
+    0.5918
+    0.6180
+    0.4541
+    0.0491
+    0.7197
+    0.7401
+    0.4048
+    0.0514
+    0.9480
+    0.8774
+    0.8276
+    0.4486
+    0.8845
+    0.8537
+    0.6477
+    0.5068
+    0.0760
+    0.3624
+    0.2311
+    0.8602
+    0.6344
+    0.7315
+    0.1564
+    0.9496
+    0.4004
+    0.6114
+    0.7985
+    0.6864
+    0.0000
+    0.5027
+    0.9856
+    0.0070
+    0.0409
+    0.1034
+    0.6034
+    0.0462
+    0.4219
+    0.3559
+
+cgsolve
+{Error using <a href="matlab:helpUtils.errorDocCallback('cgsolve', '/home/bbales2/Documents/classes/cmps240a/hw2/cgsolve.m', 39)" style="font-weight:bold">cgsolve</a> (<a href="matlab: opentoline('/home/bbales2/Documents/classes/cmps240a/hw2/cgsolve.m',39,0)">line 39</a>)
+Not enough input arguments.
+} 
+cgtest(8)
+<a href="matlab: opentoline('/home/bbales2/Documents/classes/cmps240a/hw2/cgsolve.m',55,1)">55  </a>    alpha = rtr / (d'*Ad);
+p rtr
+{Undefined function 'p' for input arguments of type 'char'.
+} 
+rtr
+
+rtr =
+
+       85344
+
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+alpha
+
+alpha =
+
+    1.5925
+
+Ad
+
+Ad =
+
+    -9
+    -7
+    -6
+    -5
+    -4
+    -3
+    -2
+     7
+     7
+     0
+     0
+     0
+     0
+     0
+     0
+    16
+    15
+     0
+     0
+     0
+     0
+     0
+     0
+    24
+    23
+     0
+     0
+     0
+     0
+     0
+     0
+    32
+    31
+     0
+     0
+     0
+     0
+     0
+     0
+    40
+    39
+     0
+     0
+     0
+     0
+     0
+     0
+    48
+    47
+     0
+     0
+     0
+     0
+     0
+     0
+    56
+   119
+    65
+    66
+    67
+    68
+    69
+    70
+   135
+
+d
+
+d =
+
+     0
+     1
+     2
+     3
+     4
+     5
+     6
+     7
+     8
+     9
+    10
+    11
+    12
+    13
+    14
+    15
+    16
+    17
+    18
+    19
+    20
+    21
+    22
+    23
+    24
+    25
+    26
+    27
+    28
+    29
+    30
+    31
+    32
+    33
+    34
+    35
+    36
+    37
+    38
+    39
+    40
+    41
+    42
+    43
+    44
+    45
+    46
+    47
+    48
+    49
+    50
+    51
+    52
+    53
+    54
+    55
+    56
+    57
+    58
+    59
+    60
+    61
+    62
+    63
+
+Ad
+
+Ad =
+
+    -9
+    -7
+    -6
+    -5
+    -4
+    -3
+    -2
+     7
+     7
+     0
+     0
+     0
+     0
+     0
+     0
+    16
+    15
+     0
+     0
+     0
+     0
+     0
+     0
+    24
+    23
+     0
+     0
+     0
+     0
+     0
+     0
+    32
+    31
+     0
+     0
+     0
+     0
+     0
+     0
+    40
+    39
+     0
+     0
+     0
+     0
+     0
+     0
+    48
+    47
+     0
+     0
+     0
+     0
+     0
+     0
+    56
+   119
+    65
+    66
+    67
+    68
+    69
+    70
+   135
+
+4 * d(8)
+
+ans =
+
+    28
+
+4 * d(8) - d(8-1)
+
+ans =
+
+    22
+
+4 * d(8) - d(8-1) - d(16)
+
+ans =
+
+     7
+
+d(16)
+
+ans =
+
+    15
+
+4 * d(8) - d(8 - 1) - d(16)
+
+ans =
+
+     7
+
+4 * d(8) - d(8 + 1) - d(16)
+
+ans =
+
+     5
+
+4 * d(8) - d(8 - 1) - d(16)
+
+ans =
+
+     7
+
+Ad
+
+Ad =
+
+    -9
+    -7
+    -6
+    -5
+    -4
+    -3
+    -2
+     7
+     7
+     0
+     0
+     0
+     0
+     0
+     0
+    16
+    15
+     0
+     0
+     0
+     0
+     0
+     0
+    24
+    23
+     0
+     0
+     0
+     0
+     0
+     0
+    32
+    31
+     0
+     0
+     0
+     0
+     0
+     0
+    40
+    39
+     0
+     0
+     0
+     0
+     0
+     0
+    48
+    47
+     0
+     0
+     0
+     0
+     0
+     0
+    56
+   119
+    65
+    66
+    67
+    68
+    69
+    70
+   135
+
+if system_dependent('IsDebugMode')==1, dbcont; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+relres
+
+relres =
+
+    1.1004
+
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+niters =
+
+    19
+
+
+relres =
+
+   3.8781e-07
+
+cgtest(8)
+<a href="matlab: opentoline('/home/bbales2/Documents/classes/cmps240a/hw2/cgsolve.m',56,1)">56  </a>    x = x + alpha * d;
+if system_dependent('IsDebugMode')==1, dbcont; end
+alpha
+
+alpha =
+
+    0.6254
+
+p relres
+{Undefined function 'p' for input arguments of type 'char'.
+} 
+relres
+
+relres =
+
+    1.1004
+
+rtr
+
+rtr =
+
+   1.0333e+05
+
+Ad
+
+Ad =
+
+   37.4321
+    5.2267
+    5.8450
+    4.8709
+    3.8967
+    2.9225
+   14.6882
+   -6.8192
+  -19.5590
+         0
+   -9.5549
+   -7.9624
+   -6.3699
+   -4.7774
+   22.2947
+  -17.1792
+  -14.6126
+   23.8871
+   -0.0000
+    0.0000
+    0.0000
+         0
+   38.2194
+  -23.3801
+  -22.4059
+   36.6270
+    0.0000
+         0
+    0.0000
+   -0.0000
+   50.9592
+  -31.1735
+  -30.1993
+   49.3668
+    0.0000
+   -0.0000
+   -0.0000
+    0.0000
+   63.6991
+  -38.9668
+  -37.9927
+   62.1066
+   -0.0000
+    0.0000
+   -0.0000
+    0.0000
+   76.4389
+  -46.7602
+   56.1325
+  178.3574
+  105.1034
+  106.6959
+  108.2884
+  109.8809
+  200.6520
+   58.5123
+ -316.5783
+   24.2651
+  -64.2953
+  -65.2694
+  -66.2436
+  -67.2178
+   33.7266
+ -360.8296
+
+d
+
+d =
+
+   14.3323
+   13.3581
+   13.9764
+   14.5947
+   15.2130
+   15.8313
+   16.4496
+    4.3281
+    6.5389
+   19.8970
+   22.1078
+   24.3186
+   26.5294
+   28.7402
+   30.9510
+    7.6821
+   11.4854
+   37.5833
+   39.7941
+   42.0049
+   44.2156
+   46.4264
+   48.6372
+   12.6286
+   16.4318
+   55.2696
+   57.4803
+   59.6911
+   61.9019
+   64.1127
+   66.3235
+   17.5750
+   21.3783
+   72.9558
+   75.1666
+   77.3774
+   79.5882
+   81.7989
+   84.0097
+   22.5215
+   26.3247
+   90.6421
+   92.8529
+   95.0636
+   97.2744
+   99.4852
+  101.6960
+   27.4679
+   31.2712
+  108.3283
+  110.5391
+  112.7499
+  114.9607
+  117.1715
+  119.3823
+   32.4143
+  -65.7009
+   22.5036
+   23.1219
+   23.7402
+   24.3585
+   24.9768
+   25.5952
+  -75.7050
+
+if system_dependent('IsDebugMode')==1, dbcont; end
+
+niters =
+
+    19
+
+
+relres =
+
+   3.8781e-07
+
+cgsolve
+{Error using <a href="matlab:helpUtils.errorDocCallback('cgsolve', '/home/bbales2/Documents/classes/cmps240a/hw2/cgsolve.m', 39)" style="font-weight:bold">cgsolve</a> (<a href="matlab: opentoline('/home/bbales2/Documents/classes/cmps240a/hw2/cgsolve.m',39,0)">line 39</a>)
+Not enough input arguments.
+} 
+cgtest(8)
+
+relres =
+
+    1.1004
+
+
+relres =
+
+    0.8118
+
+
+relres =
+
+    0.6307
+
+
+relres =
+
+    0.4218
+
+
+relres =
+
+    0.2823
+
+
+relres =
+
+    0.1948
+
+
+relres =
+
+    0.1271
+
+
+relres =
+
+    0.0708
+
+
+relres =
+
+    0.0368
+
+
+relres =
+
+    0.0155
+
+
+relres =
+
+    0.0056
+
+
+relres =
+
+    0.0022
+
+
+relres =
+
+    0.0010
+
+
+relres =
+
+   3.0258e-04
+
+
+relres =
+
+   9.3083e-05
+
+
+relres =
+
+   3.4853e-05
+
+
+relres =
+
+   9.3204e-06
+
+
+relres =
+
+   2.7596e-06
+
+
+relres =
+
+   3.8781e-07
+
+
+niters =
+
+    19
+
+
+relres =
+
+   3.8781e-07
+
+cgtest(8)
+<a href="matlab: opentoline('/home/bbales2/Documents/classes/cmps240a/hw2/cgsolve.m',55,1)">55  </a>    alpha = rtr / (d'*Ad);
+Ad
+
+Ad =
+
+    -9
+    -7
+    -6
+    -5
+    -4
+    -3
+    -2
+     7
+     7
+     0
+     0
+     0
+     0
+     0
+     0
+    16
+    15
+     0
+     0
+     0
+     0
+     0
+     0
+    24
+    23
+     0
+     0
+     0
+     0
+     0
+     0
+    32
+    31
+     0
+     0
+     0
+     0
+     0
+     0
+    40
+    39
+     0
+     0
+     0
+     0
+     0
+     0
+    48
+    47
+     0
+     0
+     0
+     0
+     0
+     0
+    56
+   119
+    65
+    66
+    67
+    68
+    69
+    70
+   135
+
