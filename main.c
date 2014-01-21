@@ -25,14 +25,17 @@ double ddot(int n, double *v, double *vv)
   return total;
 }
 
+double daxpy(int n, double a, double *x, double *y)
+{
+  for(int i = 0; i < n; i++)
+    y[i] += a * x[i];
+}
+
 int main( int argc, char* argv[] ) {
   int writeOutX = 0;
   int n, k;
   int iterations = 1000;
-  double norm;
-  double* b;
-  double* x, *r, *d, *dz, *ad, *adz;
-  double time;
+  double *b, time;
   double t1, t2;
   int size, rank;
 	
@@ -71,31 +74,27 @@ int main( int argc, char* argv[] ) {
 
   printf("Hi from rank %d of %d, z = %d\n", rank, size, z);
 	
-  // CG Solve here!
-  x = (double *)malloc(sizeof(double) * n);
-  r = (double *)malloc(sizeof(double) * n);
-  d = (double *)malloc(sizeof(double) * n);
-  dz = (double *)malloc(sizeof(double) * z);
-  ad = (double *)malloc(sizeof(double) * n);
-  adz = (double *)malloc(sizeof(double) * z);
+  double *x = (double *)malloc(sizeof(double) * n),
+    *r = (double *)malloc(sizeof(double) * n),
+    *d = (double *)malloc(sizeof(double) * n),
+    *dz = (double *)malloc(sizeof(double) * z),
+    *ad = (double *)malloc(sizeof(double) * n),
+    *adz = (double *)malloc(sizeof(double) * z),
+    *below = (double *)malloc(sizeof(double) * k),
+    *above = (double *)malloc(sizeof(double) * k);
 
-      //x = zeros(n,1);% first guess is zero vector
-      //r = b;
-      //d = r;
-      //while (still iterating)
   memset(x, 0, sizeof(double) * n);
   memcpy(r, b, sizeof(double) * n);
-  double rtr = ddot(n, r, r);
-  double relres = 1;
-  double normb = sqrt(ddot(n, b, b));
   memcpy(d, r, sizeof(double) * n);
-  int niters = 0, maxiters = 100;
 
+  double rtr = ddot(n, r, r);
+  double norm = 1;
+  double normb = sqrt(ddot(n, b, b));
+
+  int niters = 0;
   MPI_Status error;
 
-  double *below = (double *)malloc(sizeof(double) * k),
-    *above = (double *)malloc(sizeof(double) * k);
-  while(relres > 1e-6 && niters < maxiters || rank > 0)
+  while(norm > 1e-6 && niters < iterations || rank > 0)
     {
       niters = niters + 1;
 
@@ -126,9 +125,6 @@ int main( int argc, char* argv[] ) {
           //printf("%d is receiving block of size %d\n", rank, z * k);
           MPI_Recv(dz, z, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &error);
         }
-
-      MPI_Barrier(MPI_COMM_WORLD);
-      //printf("Getting ready to compute ad\n");
 
       // Each processor does their subblock
       //   Needs last row from neighbor below and first row from neighbor above
@@ -194,9 +190,6 @@ int main( int argc, char* argv[] ) {
             adz[i] -= dz[i + 1];
         }
 
-      MPI_Barrier(MPI_COMM_WORLD);
-      //printf("Done computing ad, now to suck it up\n");
-
       //Recover ad from procs...
       if(rank == 0)
         {
@@ -215,8 +208,6 @@ int main( int argc, char* argv[] ) {
           MPI_Send(adz, z, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
         }
 
-      MPI_Barrier(MPI_COMM_WORLD);
-
       if(rank != 0)
         {
           continue;
@@ -224,11 +215,14 @@ int main( int argc, char* argv[] ) {
 
       double alpha = rtr / ddot(n, d, ad);
 
-      for(int i = 0; i < n; i++)
+      daxpy(n, alpha, d, x);
+      daxpy(n, -alpha, ad, r);
+      
+      /*for(int i = 0; i < n; i++)
         {
           x[i] += alpha * d[i];
           r[i] -= alpha * ad[i];
-        }
+          }*/
 
       double rtrold = rtr;
       rtr = ddot(n, r, r);
@@ -239,12 +233,11 @@ int main( int argc, char* argv[] ) {
           d[i] = r[i] + beta * d[i];
         }
 
-      relres = sqrt(rtr) / normb;
-      norm = relres;
+      norm = sqrt(rtr) / normb;
 
       if(rank == 0)
         {
-          printf("%f\n", relres);
+          printf("%f\n", norm);
         }
     }
 
@@ -254,9 +247,6 @@ int main( int argc, char* argv[] ) {
       
       MPI_Bcast(&stat2, 1, MPI_INT, 0, MPI_COMM_WORLD);
     }
-
-  free(above);
-  free(below);
 
   // End Timer
   t2 = MPI_Wtime();
@@ -273,11 +263,15 @@ int main( int argc, char* argv[] ) {
       printf( "Elapsed time during CGSOLVE: %lf\n", t1-t2);
     }
   // Deallocate 
+  free(above);
+  free(below);
   free(b);
   free(x);
   free(r);
   free(d);
+  free(dz);
   free(ad);
+  free(adz);
 	
   MPI_Finalize();
 	
