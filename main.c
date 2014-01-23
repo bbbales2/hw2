@@ -78,21 +78,149 @@ int main( int argc, char* argv[] ) {
     *r = (double *)malloc(sizeof(double) * n),
     *d = (double *)malloc(sizeof(double) * n),
     *dz = (double *)malloc(sizeof(double) * z),
+    *xz = (double *)malloc(sizeof(double) * z),
+    *rz = (double *)malloc(sizeof(double) * z),
     *ad = (double *)malloc(sizeof(double) * n),
     *adz = (double *)malloc(sizeof(double) * z),
     *below = (double *)malloc(sizeof(double) * k),
+    *bz = (double *)malloc(sizeof(double) * z),    
+    *total = (double *)malloc(sizeof(double) * size),   //Place to add up all individual dot products
     *above = (double *)malloc(sizeof(double) * k);
+
+    double totalz = 0.0;
+    MPI_Status error;
 
   memset(x, 0, sizeof(double) * n);
   memcpy(r, b, sizeof(double) * n);
   memcpy(d, r, sizeof(double) * n);
 
-  double rtr = ddot(n, r, r);
+//////Send x,r,b and d to processors in xz, rz, bz and dz to initialize loop
+      if(rank == 0)
+        {
+          for(int i = 1; i < size; i++)
+            {
+              //Send a block of x to each processor
+              MPI_Send(&x[i * z], z, MPI_DOUBLE, i, 0, MPI_COMM_WORLD);
+            }
+          //Copy components from x to local vector xz
+          memcpy(xz, x, sizeof(double) * z);
+        }
+      else
+        {
+          //printf("%d is receiving block of size %d\n", rank, z * k);
+          MPI_Recv(xz, z, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &error);
+        }
+
+      if(rank == 0)
+          {
+            for(int i = 1; i < size; i++)
+              {
+                //Send a block of r to each processor
+                MPI_Send(&r[i * z], z, MPI_DOUBLE, i, 0, MPI_COMM_WORLD);
+              }
+            //Copy components from r to local vector rz
+            memcpy(rz, r, sizeof(double) * z);
+          }
+      else
+          {
+            //printf("%d is receiving block of size %d\n", rank, z * k);
+            MPI_Recv(rz, z, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &error);
+          }
+
+      if(rank == 0)
+        {
+          for(int i = 1; i < size; i++)
+            {
+              //Send a block of b to each processor
+              MPI_Send(&b[i * z], z, MPI_DOUBLE, i, 0, MPI_COMM_WORLD);
+            }
+          //Copy components from b to local vector bz
+          memcpy(bz, b, sizeof(double) * z);
+        }
+      else
+        {
+          //printf("%d is receiving block of size %d\n", rank, z * k);
+          MPI_Recv(bz, z, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &error);
+        }
+
+      if(rank == 0)
+        {
+          for(int i = 1; i < size; i++)
+            {
+              //printf("Sending block %d of size %d %lx\n", i, z * k, (unsigned long int)d);
+              MPI_Send(&d[i * z], z, MPI_DOUBLE, i, 0, MPI_COMM_WORLD);
+            }
+
+          memcpy(dz, d, sizeof(double) * z);
+        }
+      else
+        {
+          //printf("%d is receiving block of size %d\n", rank, z * k);
+          MPI_Recv(dz, z, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &error);
+        }
+
+//////////CALCULATE RTR VIA DDOT (parallel)
+    double rtr = 0.0;//= ddot(n, r, r);
+
+    for(int i = 0; i < z; i++)
+      {
+        totalz += rz[i] * rz[i];
+      }
+    
+    //Collect sums back up
+    if(rank == 0)
+      {
+        for(int i = 1; i < size; i++)
+          {
+            MPI_Recv(&total[i], 1, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, &error); 
+          }
+  
+        total[0]=totalz;
+      }
+    else
+      {
+        MPI_Send(&totalz, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+      }
+      
+    for(int i = 0; i < size; i++)
+      {
+        rtr += total[i];
+      }
+
   double norm = 1;
-  double normb = sqrt(ddot(n, b, b));
+//////////CALCULATE NORMB VIA DDOT (parallel)
+  double normb =0.0;//= sqrt(ddot(n, b, b));
+    
+    totalz=0;
+
+    for(int i = 0; i < z; i++)
+      {
+        totalz += bz[i] * bz[i];
+      }
+
+    //Collect sums back up
+    if(rank == 0)
+      {
+        for(int i = 1; i < size; i++)
+          {
+            MPI_Recv(&total[i], 1, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, &error); 
+          }
+  
+        total[0]=totalz;
+      }
+    else
+      {
+        MPI_Send(&totalz, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+      }
+      
+    for(int i = 0; i < size; i++)
+      {
+        normb += total[i];
+      }
+
+  normb = sqrt(normb);
 
   int niters = 0;
-  MPI_Status error;
 
   while(norm > 1e-6 && niters < iterations || rank > 0)
     {
@@ -109,22 +237,6 @@ int main( int argc, char* argv[] ) {
         break;
 
       //printf("Distributing d\n");
-      //Distribute d to procs...
-      if(rank == 0)
-        {
-          for(int i = 1; i < size; i++)
-            {
-              //printf("Sending block %d of size %d %lx\n", i, z * k, (unsigned long int)d);
-              MPI_Send(&d[i * z], z, MPI_DOUBLE, i, 0, MPI_COMM_WORLD);
-            }
-
-          memcpy(dz, d, sizeof(double) * z);
-        }
-      else
-        {
-          //printf("%d is receiving block of size %d\n", rank, z * k);
-          MPI_Recv(dz, z, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &error);
-        }
 
       // Each processor does their subblock
       //   Needs last row from neighbor below and first row from neighbor above
@@ -189,48 +301,96 @@ int main( int argc, char* argv[] ) {
           if(l != k - 1)
             adz[i] -= dz[i + 1];
         }
+ 
+      //////////////COMPUTE ALPHA VIA DDOT (parallel)
+      double alpha = 0.0;//rtr / ddot(n, d, ad);
 
-      //Recover ad from procs...
+      totalz=0;
+
+      for(int i = 0; i < z; i++)
+        {
+          totalz += dz[i] * adz[i];
+        }
+
+      //Collect sums back up
       if(rank == 0)
         {
           for(int i = 1; i < size; i++)
             {
-              MPI_Recv(&ad[i * z], z, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, &error);
+              MPI_Recv(&total[i], 1, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, &error); 
             }
-
-          for(int i = 0; i < z; i++)
-            {
-              ad[i] = adz[i];
-            }
+  
+          total[0]=totalz;
         }
       else
         {
-          MPI_Send(adz, z, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+          MPI_Send(&totalz, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+        } 
+      
+      for(int i = 0; i < size; i++)
+        {
+          alpha += total[i];
+        }
+
+      alpha = rtr/alpha;
+
+      MPI_Bcast(&alpha, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+
+      //daxpy(n, alpha, d, x);
+      //daxpy(n, -alpha, ad, r);
+
+///////////////Parallel daxpy
+      for(int i = 0; i < z; i++)
+        {
+          xz[i] += alpha * dz[i];
+          rz[i] -= alpha * adz[i];
+        }
+
+      double rtrold = rtr;
+      //////////CALCULATE RTR VIA DDOT (parallel)
+      rtr = 0.0;//ddot(n, r, r);
+     
+      totalz=0;
+
+      for(int i = 0; i < z; i++)
+        {
+          totalz += rz[i] * rz[i];
+        }
+    
+      //Collect sums back up
+      if(rank == 0)
+        {
+          for(int i = 1; i < size; i++)
+            {
+              MPI_Recv(&total[i], 1, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, &error); 
+            }
+  
+          total[0]=totalz;
+        }
+      else
+        {
+          MPI_Send(&totalz, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+        }
+      
+      for(int i = 0; i < size; i++)
+        {
+          rtr += total[i];
+        }
+
+      double beta = rtr / rtrold;
+
+      MPI_Bcast(&beta, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+////////////Compute d=r+beta*d in parallel
+      for(int i = 0; i < z; i++)
+        {
+          dz[i] = rz[i] + beta * dz[i];
         }
 
       if(rank != 0)
         {
           continue;
-        }
-
-      double alpha = rtr / ddot(n, d, ad);
-
-      daxpy(n, alpha, d, x);
-      daxpy(n, -alpha, ad, r);
-      
-      /*for(int i = 0; i < n; i++)
-        {
-          x[i] += alpha * d[i];
-          r[i] -= alpha * ad[i];
-          }*/
-
-      double rtrold = rtr;
-      rtr = ddot(n, r, r);
-      double beta = rtr / rtrold;
-
-      for(int i = 0; i < n; i++)
-        {
-          d[i] = r[i] + beta * d[i];
         }
 
       norm = sqrt(rtr) / normb;
@@ -260,7 +420,7 @@ int main( int argc, char* argv[] ) {
       // Output
       printf( "Problem size (k): %d\n",k);
       printf( "Norm of the residual after %d iterations: %lf\n",iterations,norm);
-      printf( "Elapsed time during CGSOLVE: %lf\n", t1-t2);
+      printf( "Elapsed time during CGSOLVE: %lf\n", t2-t1);
     }
   // Deallocate 
   free(above);
