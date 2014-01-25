@@ -138,7 +138,7 @@ int main( int argc, char* argv[] ) {
   // Start Timer
   t1 = MPI_Wtime();
 
-  printf("Hi from rank %d of %d, z = %d\n", rank, size, z);
+  //printf("Hi from rank %d of %d, z = %d\n", rank, size, z);
 	
   double *dz = (double *)malloc(sizeof(double) * z),
     *xz = (double *)malloc(sizeof(double) * z),
@@ -212,10 +212,10 @@ int main( int argc, char* argv[] ) {
 
       norm = sqrt(rtr) / normb;
 
-      if(rank == 0)
+      /*if(rank == 0)
         {
           printf("%f\n", norm);
-        }
+          }*/
     }
 
   if(rank == 0)
@@ -235,9 +235,10 @@ int main( int argc, char* argv[] ) {
       //}
       
       // Output
-      printf( "Problem size (k): %d\n",k);
-      printf( "Norm of the residual after %d iterations: %lf\n",iterations,norm);
-      printf( "Elapsed time during CGSOLVE: %lf\n", t2-t1);
+      //printf( "Problem size (k): %d\n",k);
+      //printf( "Norm of the residual after %d iterations: %lf\n",iterations,norm);
+      //printf( "Elapsed time during CGSOLVE: %lf\n", t2-t1);
+      printf("%f %f\n", norm, t2 - t1);
     }
   // Deallocate 
   free(bz);
