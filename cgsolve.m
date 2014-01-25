@@ -51,7 +51,7 @@ d = r;
 niters = 0;
 while relres > 1e-6  &&  niters < maxiters
     niters = niters+1;
-    Ad = Atimes(d,n);
+    Ad = Atimes(d,n); %line 114 to 214
     alpha = rtr / (d'*Ad);
     x = x + alpha * d;
     r = r - alpha * Ad;
