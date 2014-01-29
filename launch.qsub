@@ -1,0 +1,13 @@
+#!/bin/sh
+#PBS -N hello
+#PBS -l nodes=4:ppn=16
+#PBS -l walltime=0:30:00
+#PBS -V
+
+cd hw2
+
+for p in 1 2 4 8 16 32 64
+do
+    mpirun -machinefile $PBS_NODEFILE  -np $p ./cgsolve 2048 out.txt
+done
+

@@ -1,5 +1,5 @@
 CC = mpicc
-CFLAGS = --std=c99 -g -O3
+CFLAGS = -c99 -g -O3
 LIBS = -lm
 OBJECTS = main.o hw2harness.o
 EXECUTABLE = cgsolve

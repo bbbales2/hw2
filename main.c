@@ -31,7 +31,7 @@ double ddot(int z, double *v, double *vv)
   return ttotal;
 }
 
-double daxpy(int z, double alpha, double beta, double *x, double *y)
+void daxpy(int z, double alpha, double beta, double *x, double *y)
 {
   for(int i = 0; i < z; i++)
     y[i] = beta * y[i] + alpha * x[i];
@@ -133,8 +133,14 @@ int main( int argc, char* argv[] ) {
   writeOutX = atoi( argv[argc-1] ); // Write X to file if true, do not write if unspecified.
 
   //z = the amount of data to be stored on each processor
-  int z = n / size;
-	
+  int kz = k / size;
+  int remz = k % size;
+
+  if(rank == size - 1)
+    kz += remz;
+
+  int z = k * kz;
+
   // Start Timer
   t1 = MPI_Wtime();
 
@@ -149,9 +155,13 @@ int main( int argc, char* argv[] ) {
   double totalz = 0.0;
 	
   // each processor calls cs240_getB to build its own part of the b vector!
-  for(int i = 0; i < size; i++)
-    for(int j = 0; j < z; j++)
-      bz[j] = cs240_getB(i * z + j, n);
+  /*for(int j = 0; j < z; j++)
+    if(rank < rem)
+      bz[j] = cs240_getB(rank * z + j, n);
+    else
+    bz[j] = cs240_getB(rem * (z + 1) + (rank - rem) * z + j, n);*/
+  for(int j = 0; j < z; j++)
+    bz[j] = cs240_getB(rank * (k / size * k) + j, n);
 
   memset(xz, 0, sizeof(double) * z);
   memcpy(rz, bz, sizeof(double) * z);
@@ -212,10 +222,10 @@ int main( int argc, char* argv[] ) {
 
       norm = sqrt(rtr) / normb;
 
-      /*if(rank == 0)
+      if(rank == 0)
         {
-          printf("%f\n", norm);
-          }*/
+          printf("iter %d, norm %f\n", niters, norm);
+        }
     }
 
   if(rank == 0)
@@ -235,10 +245,10 @@ int main( int argc, char* argv[] ) {
       //}
       
       // Output
-      //printf( "Problem size (k): %d\n",k);
-      //printf( "Norm of the residual after %d iterations: %lf\n",iterations,norm);
-      //printf( "Elapsed time during CGSOLVE: %lf\n", t2-t1);
-      printf("%f %f\n", norm, t2 - t1);
+      printf( "Problem size (k): %d\n",k);
+      printf( "Norm of the residual after %d iterations: %lf\n",niters,norm);
+      printf( "Elapsed time during CGSOLVE: %lf\n", t2-t1);
+      ///printf("%f %d %f\n", norm, niters, t2 - t1);
     }
   // Deallocate 
   free(bz);

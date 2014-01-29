@@ -1,0 +1,14 @@
+#!/bin/sh
+#PBS -N weak
+#PBS -l nodes=8:ppn=8
+#PBS -l walltime=0:30:00
+#PBS -V
+
+cd hw2
+
+for p in 1 2 4 8 16 32 64
+do
+    k=$(printf '%.0f ' $(echo 'e(l(' $p ') * 0.5) * 1024' | bc -l))
+    echo -n $k ' '
+    mpirun -machinefile $PBS_NODEFILE -np $p ./cgsolve $k out.txt
+done
